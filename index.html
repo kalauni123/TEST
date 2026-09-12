@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 1: Determination of Coefficient of Viscosity of Liquid by Stoke's Method</title>
+    
+    <!-- KaTeX High-Precision Mathematical Typesetting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" 
+            onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}]});"></script>
+
+    <style>
+        :root {
+            --bg-deep: #080b11;
+            --bg-surface: #101522;
+            --bg-card: #171d2d;
+            --bg-well: #0c1019;
+            --cyan-glow: #00f0ff;
+            --amber-glow: #ffb300;
+            --green-glow: #00e676;
+            --purple-glow: #b388ff;
+            --blue-accent: #29b6f6;
+            --red-glow: #ff2a55;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-dim: #1e293b;
+            --border-bright: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.5;
+        }
+
+        /* Standard A4 PDF Report Print Styling (Browser native header & footer suppressed, 0.5 inch content margins) */
+        @page {
+            size: A4 portrait;
+            margin: 0; /* Suppresses native browser headers (URL, title) and footers (page count, date) */
+        }
+
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0.5in !important; /* Enforces 0.5in margins on top, bottom, left, and right */
+                margin: 0 !important;
+                font-size: 9.5pt;
+                font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+                box-sizing: border-box !important;
+            }
+
+            .no-print, button, .control-deck, .notebook-tabs, .interactive-btn-matrix, .slider-group {
+                display: none !important;
+            }
+
+            .workspace-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 16px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .module-card {
+                background: #ffffff !important;
+                border: none !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            header {
+                border-bottom: 2px solid #000000 !important;
+                color: #000000 !important;
+                margin-bottom: 14px !important;
+                padding-bottom: 10px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .exp-badge {
+                background: #f1f5f9 !important;
+                border: 1px solid #000000 !important;
+                color: #000000 !important;
+                font-weight: bold;
+            }
+
+            h1 {
+                color: #000000 !important;
+                font-size: 13pt !important;
+            }
+
+            .subtitle {
+                color: #1e293b !important;
+                font-size: 8.5pt !important;
+            }
+
+            .student-metadata-grid {
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                color: #000000 !important;
+                padding: 8px 12px !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+            }
+
+            .meta-field label {
+                color: #0f172a !important;
+                font-weight: bold !important;
+            }
+
+            .meta-field input {
+                background: transparent !important;
+                border: none !important;
+                border-bottom: 1px dashed #475569 !important;
+                color: #000000 !important;
+                font-weight: bold !important;
+                padding: 2px !important;
+            }
+
+            .instructor-card {
+                color: #000000 !important;
+                border-left: 3px solid #000000 !important;
+            }
+
+            .instructor-card strong {
+                color: #000000 !important;
+            }
+
+            /* Un-hide ALL tab views sequentially so no information is skipped in PDF */
+            #view-pioneer-tables,
+            #view-unified-table,
+            #view-screw,
+            #view-graphs,
+            #view-suppl,
+            #view-theory,
+            #view-viva {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+                page-break-inside: auto;
+                break-inside: auto;
+                margin-bottom: 18px !important;
+            }
+
+            .section-header, .card-title {
+                color: #0f172a !important;
+                border-bottom: 1.5px solid #000000 !important;
+                font-size: 10.5pt !important;
+                font-weight: bold !important;
+                margin-top: 10px !important;
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+
+            .table-responsive {
+                background: transparent !important;
+                border: none !important;
+                overflow: visible !important;
+            }
+
+            table {
+                width: 100% !important;
+                border: 1px solid #000000 !important;
+                border-collapse: collapse !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                font-size: 8pt !important;
+            }
+
+            th, td {
+                border: 1px solid #000000 !important;
+                color: #000000 !important;
+                background: #ffffff !important;
+                padding: 5px 6px !important;
+            }
+
+            th {
+                background-color: #f1f5f9 !important;
+                color: #000000 !important;
+                font-weight: bold !important;
+            }
+
+            th.group-header {
+                background-color: #e2e8f0 !important;
+                color: #000000 !important;
+            }
+
+            .mean-cell {
+                background-color: #f8fafc !important;
+                color: #000000 !important;
+                font-weight: bold !important;
+            }
+
+            .formula-card, .terminal-readout {
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                color: #000000 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                font-size: 8.5pt !important;
+            }
+
+            .formula-card strong, .formula-card h3 {
+                color: #0f172a !important;
+            }
+
+            .math-box {
+                background: #f1f5f9 !important;
+                border-left: 3px solid #0f172a !important;
+                color: #000000 !important;
+            }
+
+            .canvas-container, .micrometer-canvas-container {
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            canvas {
+                filter: invert(0.92) hue-rotate(180deg) !important;
+            }
+
+            .viva-container {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            .viva-item {
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                margin-bottom: 6px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .viva-question {
+                color: #0f172a !important;
+                font-weight: bold !important;
+            }
+
+            .viva-question span {
+                display: none !important;
+            }
+
+            .viva-answer {
+                display: block !important;
+                color: #1e293b !important;
+                border-top: 1px dashed #cbd5e1 !important;
+            }
+        }
+
+        header {
+            width: 100%;
+            max-width: 1600px;
+            border-bottom: 2px solid var(--border-dim);
+            padding-bottom: 18px;
+            margin-bottom: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .exp-badge {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(41, 182, 246, 0.22));
+            border: 1px solid var(--cyan-glow);
+            color: var(--cyan-glow);
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        h1 {
+            color: var(--cyan-glow);
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 6px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            max-width: 1200px;
+        }
+
+        .student-metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 4px;
+        }
+
+        .meta-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-field label {
+            font-weight: 600;
+            color: var(--cyan-glow);
+            min-width: 65px;
+        }
+
+        .meta-field input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            color: var(--text-primary);
+            padding: 5px 10px;
+            font-size: 0.82rem;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .meta-field input:focus {
+            border-color: var(--cyan-glow);
+        }
+
+        .instructor-card {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            border-left: 3px solid var(--cyan-glow);
+            padding-left: 12px;
+        }
+
+        .instructor-card strong {
+            color: var(--text-primary);
+        }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            gap: 22px;
+            width: 100%;
+            max-width: 1600px;
+        }
+
+        @media (max-width: 1250px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--cyan-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .canvas-container {
+            background: radial-gradient(circle at center, #0d1424 0%, #030508 100%);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            height: 480px;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .chronometer-panel {
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chrono-readout {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.55rem;
+            font-weight: bold;
+            color: var(--amber-glow);
+            letter-spacing: 1px;
+        }
+
+        .chrono-readout.active {
+            color: var(--green-glow);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+        }
+
+        .control-deck {
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .slider-header span strong {
+            color: var(--cyan-glow);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 5px;
+            background: var(--border-dim);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--cyan-glow);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+        }
+
+        .ball-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 8px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .ball-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            padding: 7px;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .ball-btn:hover {
+            border-color: var(--blue-accent);
+            color: var(--text-primary);
+        }
+
+        .ball-btn.active {
+            border-color: var(--cyan-glow);
+            background: rgba(0, 240, 255, 0.12);
+            color: var(--cyan-glow);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        /* 12 Ball Selection Pool */
+        .ball-pool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 4px;
+        }
+
+        .pool-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 0.73rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .pool-item.selected {
+            border-color: var(--green-glow);
+            background: rgba(0, 230, 118, 0.12);
+            color: var(--green-glow);
+        }
+
+        .pool-item input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: var(--green-glow);
+        }
+
+        .interactive-btn-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        button.btn-primary {
+            background: linear-gradient(135deg, #00838f, #00acc1);
+            border: 1px solid var(--cyan-glow);
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        button.btn-primary:hover {
+            background: linear-gradient(135deg, #00acc1, #00e5ff);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        button.btn-secondary {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button.btn-secondary:hover {
+            border-color: var(--cyan-glow);
+            color: var(--cyan-glow);
+        }
+
+        button.btn-danger {
+            background: rgba(255, 23, 68, 0.15);
+            border: 1px solid var(--red-glow);
+            color: var(--red-glow);
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button.btn-danger:hover {
+            background: rgba(255, 23, 68, 0.3);
+        }
+
+        /* Notebook Tabs */
+        .notebook-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-dim);
+            gap: 4px;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-button.active-tab {
+            color: var(--cyan-glow);
+            background: var(--bg-surface);
+            border-color: var(--cyan-glow) var(--cyan-glow) var(--bg-surface) var(--cyan-glow);
+            font-weight: bold;
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            overflow-x: auto;
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 9px 8px;
+            border: 1px solid var(--border-dim);
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #0c101a;
+            color: var(--cyan-glow);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        th.group-header {
+            background-color: #121826;
+            color: var(--amber-glow);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(0, 240, 255, 0.04);
+        }
+
+        .mean-cell {
+            vertical-align: middle;
+            font-weight: bold;
+            color: var(--green-glow);
+            background-color: rgba(0, 230, 118, 0.08) !important;
+            font-size: 0.85rem;
+        }
+
+        .formula-card {
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            padding: 14px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .formula-card strong {
+            color: var(--cyan-glow);
+        }
+
+        .math-box {
+            background: rgba(0, 240, 255, 0.06);
+            border-left: 3px solid var(--cyan-glow);
+            padding: 10px 14px;
+            margin: 6px 0;
+            border-radius: 0 4px 4px 0;
+            color: var(--text-primary);
+        }
+
+        .terminal-readout {
+            background: #04060a;
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            padding: 14px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            color: #b0bec5;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        /* Viva Voce Accordion */
+        .viva-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .viva-item {
+            background: var(--bg-well);
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .viva-question {
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--cyan-glow);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .viva-question:hover {
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .viva-answer {
+            padding: 0 16px 12px 16px;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+            display: none;
+            border-top: 1px dashed var(--border-dim);
+            margin-top: 6px;
+            padding-top: 10px;
+        }
+
+        .viva-item.open .viva-answer {
+            display: block;
+        }
+
+        .micrometer-canvas-container {
+            background: #060910;
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .badge {
+            background: rgba(255, 171, 0, 0.15);
+            border: 1px solid var(--amber-glow);
+            color: var(--amber-glow);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .section-header {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--cyan-glow);
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 4px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <div>
+            <span class="exp-badge">Experiment No. 1</span>
+            <h1>Determination of Coefficient of Viscosity of Liquid by Stoke's Method</h1>
+        </div>
+        <div class="instructor-card">
+            <em>Prepared By:</em><br>
+            <strong>Dipendra Prasad Kalauni</strong><br>
+            M.Sc. in Physics (CDP, TU)<br>
+            Laboratory Instructor | Physics Laboratory<br>
+            National School of Sciences (NSS)
+        </div>
+    </div>
+    
+    <div class="subtitle">
+        Determination of the coefficient of viscosity of liquid by Stoke's method by graphically analyzing the variation of time taken for metal balls of different diameters to travel the same distance ($L$) in glycerin with respect to their diameters.
+    </div>
+
+    <div class="student-metadata-grid">
+        <div class="meta-field"><label>Date:</label><input type="text" id="meta-date" placeholder="DD/MM/YYYY"></div>
+        <div class="meta-field"><label>Set:</label><input type="text" id="meta-set" value="Set-II" readonly></div>
+        <div class="meta-field"><label>Name:</label><input type="text" id="meta-name" placeholder="Student Name"></div>
+        <div class="meta-field"><label>Group:</label><input type="text" id="meta-group" placeholder="e.g. A1"></div>
+        <div class="meta-field"><label>Roll No:</label><input type="text" id="meta-roll" placeholder="Roll Number"></div>
+        <div class="meta-field"><label>Sub group:</label><input type="text" id="meta-subgroup" placeholder="Sub group"></div>
+        <div class="meta-field"><label>Section:</label><input type="text" id="meta-section" placeholder="Section"></div>
+    </div>
+</header>
+
+<div class="workspace-grid">
+    <!-- LEFT MODULE: Canvas Simulation & Controls -->
+    <div class="module-card">
+        <div class="card-header">
+            <span class="card-title">Stokes Fluid Dynamics Simulator</span>
+            <span class="badge" id="lbl-status-badge">READY TO DROP</span>
+        </div>
+
+        <div class="chronometer-panel">
+            <span style="font-size: 0.78rem; font-weight: bold; color: var(--text-secondary);">DIGITAL STOPWATCH:</span>
+            <span class="chrono-readout" id="lbl-timer">0.00 s</span>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="fluidCanvas" width="440" height="460"></canvas>
+        </div>
+
+        <div class="control-deck">
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Selected Active Metal Ball:</span>
+                    <span><strong id="txt-selected-d">3.00</strong> mm</span>
+                </div>
+                <!-- Selected Active Balls Buttons Grid -->
+                <div class="ball-selector-grid" id="active-balls-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- FLEXIBLE 12 BALL SELECTION POOL PANEL -->
+            <div class="slider-group" style="margin-top: 4px;">
+                <div class="slider-header" style="align-items: center;">
+                    <span style="color: var(--amber-glow); font-weight: bold;">Select Any Balls (12 Total Available &bull; Max 10 Table Rows):</span>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="selectAll12Balls()" style="font-size: 0.7rem; padding: 2px 6px; cursor: pointer; background: var(--bg-card); border: 1px solid var(--cyan-glow); color: var(--cyan-glow); border-radius: 3px;">Select All 12</button>
+                        <span style="font-size: 0.78rem;"><strong id="lbl-chosen-count" style="color: var(--green-glow)">12 Selected</strong></span>
+                    </div>
+                </div>
+                <div class="ball-pool-grid" id="ball-pool-container">
+                    <!-- 12 Balls Checkbox Grid populated dynamically -->
+                </div>
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Distance Between Reference Marks A & B ($L$):</span>
+                    <span><strong id="txt-dist-L">30.0</strong> cm</span>
+                </div>
+                <input type="range" id="slider-L" min="20.0" max="60.0" step="1.0" value="30.0" oninput="updateDistanceL()">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Glycerin Temperature ($T$):</span>
+                    <span><strong id="txt-temp">20.0</strong> &deg;C</span>
+                </div>
+                <input type="range" id="slider-temp" min="15.0" max="35.0" step="0.5" value="20.0" oninput="updateTemperature()">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Stopwatch Sensor Mode:</span>
+                    <span><strong id="txt-mode-label" style="color: var(--cyan-glow)">AUTOMATIC SENSOR</strong></span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-secondary" style="flex:1;" id="btn-mode-auto" onclick="setTimerMode('auto')">Auto Sensor (Mark A/B)</button>
+                    <button class="btn-secondary" style="flex:1;" id="btn-mode-manual" onclick="setTimerMode('manual')">Manual Push Button</button>
+                </div>
+            </div>
+
+            <div class="interactive-btn-matrix">
+                <button class="btn-primary" id="btn-drop" onclick="dropBall()">Drop Metal Ball</button>
+                <button class="btn-secondary" id="btn-manual-timer" onclick="toggleManualTimer()" disabled>Start/Stop Timer</button>
+                <button class="btn-primary" style="background: linear-gradient(135deg, #2e7d32, #43a047); border-color: var(--green-glow);" onclick="logObservationRow()">Log Data Row</button>
+                <button class="btn-danger" onclick="resetObservations()">Clear Table</button>
+            </div>
+            
+            <button class="btn-secondary no-print" onclick="triggerPrintReport()" style="margin-top: 4px; background: rgba(41, 182, 246, 0.15); border-color: var(--blue-accent); color: var(--blue-accent);">
+                Print / Export A4 Report PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- RIGHT MODULE: Tabbed Tables, Metrology, Graphs & Supplementary Calculations -->
+    <div class="module-card">
+        <div class="notebook-tabs no-print">
+            <div class="tab-button active-tab" id="tab-pioneer-tables" onclick="switchTab('pioneer-tables')">Observation Tables (1 & 2)</div>
+            <div class="tab-button" id="tab-unified-table" onclick="switchTab('unified-table')">Unified Observation Table</div>
+            <div class="tab-button" id="tab-screw" onclick="switchTab('screw')">Micrometer Screw Gauge</div>
+            <div class="tab-button" id="tab-graphs" onclick="switchTab('graphs')">Graphical Analysis</div>
+            <div class="tab-button" id="tab-suppl" onclick="switchTab('suppl')">Supplementary Info & Worked Calculations</div>
+            <div class="tab-button" id="tab-theory" onclick="switchTab('theory')">Theory & Derivations</div>
+            <div class="tab-button" id="tab-viva" onclick="switchTab('viva')">Viva Voce Q&A</div>
+        </div>
+
+        <!-- TAB 1: PIONEER TEXTBOOK TABLES (TABLE 1 & TABLE 2) -->
+        <div id="view-pioneer-tables" style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="formula-card">
+                <div><strong>Standard Observation Parameters:</strong></div>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.84rem; line-height: 1.6;">
+                    <span>Nature of Liquid = <strong>Glycerin</strong></span>
+                    <span>Density of Glycerin ($\sigma$) = <strong>$1.26\text{ g/cm}^3$</strong></span>
+                    <span>Density of Steel Ball ($\rho$) = <strong>$7.80\text{ g/cm}^3$</strong></span>
+                    <span>Distance $AB$ ($L$) = <strong id="lbl-param-L">$30.0\text{ cm}$</strong></span>
+                    <span>Least Count ($L.C.$) = <strong>$0.01\text{ mm} = 0.001\text{ cm}$</strong></span>
+                    <span>Acceleration due to Gravity ($g$) = <strong>$980\text{ cm/s}^2$</strong></span>
+                </div>
+            </div>
+
+            <div class="section-header">Table 1: For Diameter of Steel Ball</div>
+            <div class="table-responsive">
+                <table id="table1-pioneer">
+                    <thead>
+                        <tr>
+                            <th>S.N.</th>
+                            <th>Metal Ball</th>
+                            <th>Main Scale Reading<br>$A$ (mm)</th>
+                            <th>Circular Scale Reading<br>$B$ (divs)</th>
+                            <th>Value of C.S.D.<br>$C = B \times L.C.$ (mm)</th>
+                            <th>Total Diameter<br>$D = A + C$ (mm)</th>
+                            <th>Corrected Diameter<br>$D$ (mm)</th>
+                            <th>Radius of Ball<br>$r = \frac{D}{2}$ (mm)</th>
+                            <th>Radius of Ball<br>$r$ (cm)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table1-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-header">Table 2: Determination of Coefficient of Viscosity</div>
+            <div class="table-responsive">
+                <table id="table2-pioneer">
+                    <thead>
+                        <tr>
+                            <th>S.N.</th>
+                            <th>Metal Ball</th>
+                            <th>Time of Fall from $A$ to $B$<br>$t$ (s)</th>
+                            <th>Terminal Velocity<br>$v = \frac{L}{t}$ (cm/s)</th>
+                            <th>Coefficient of Viscosity<br>$\eta = \frac{2}{9} \frac{(\rho - \sigma) g r^2}{v}$ (Poise)</th>
+                            <th style="background: rgba(0, 230, 118, 0.15); color: var(--green-glow);">Mean Viscosity<br>$\bar{\eta}$ (Poise)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table2-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 2: UNIFIED MANUAL TABLE -->
+        <div id="view-unified-table" style="display: none; flex-direction: column; gap: 14px;">
+            <div class="card-header">
+                <span class="card-title">Unified Observation Matrix</span>
+            </div>
+            <div class="table-responsive">
+                <table id="obs-table-unified">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">S.N.</th>
+                            <th colspan="3" class="group-header">Micrometer Screw Gauge Reading for Ball Diameter ($D$)</th>
+                            <th rowspan="2">Time of Fall ($t$)<br>through $AB$ (s)</th>
+                            <th rowspan="2">Terminal Velocity<br>$v = \frac{L}{t}$ (cm/s)</th>
+                            <th rowspan="2">Radius of Ball<br>$r$ (cm)</th>
+                            <th rowspan="2">Coefficient of Viscosity<br>$\eta = \frac{2}{9} \frac{(\rho - \sigma) g r^2}{v}$ (Poise)</th>
+                            <th rowspan="2" style="background: rgba(0, 230, 118, 0.15); color: var(--green-glow);">Mean Viscosity<br>$\bar{\eta}$ (Poise)</th>
+                        </tr>
+                        <tr>
+                            <th class="group-header">M.S.R. ($a$) mm</th>
+                            <th class="group-header">C.S.R. ($b$) divs</th>
+                            <th class="group-header">Total Diameter $D = a + b \times L.C.$ (mm)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unified-table-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: MICROMETER SCREW GAUGE -->
+        <div id="view-screw" style="display: none; flex-direction: column; gap: 14px;">
+            <div class="card-header">
+                <span class="card-title">Virtual Micrometer Screw Gauge Metrology</span>
+                <span class="badge">LEAST COUNT = 0.01 mm</span>
+            </div>
+
+            <div class="micrometer-canvas-container">
+                <canvas id="screwCanvas" width="600" height="220"></canvas>
+                <div style="font-size: 0.85rem; text-align: center; color: var(--text-secondary);">
+                    Use the thimble slider below to simulate taking precision diameter measurements for the selected ball.
+                </div>
+            </div>
+
+            <div class="control-deck">
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span>Rotate Circular Scale (Thimble Adjustment):</span>
+                        <span>C.S. Division ($B$): <strong id="txt-cs-reading">0</strong></span>
+                    </div>
+                    <input type="range" id="slider-cs" min="0" max="99" step="1" value="0" oninput="updateScrewGaugeUI()">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 0.82rem; text-align: center; background: var(--bg-well); padding: 10px; border-radius: 6px; border: 1px solid var(--border-dim);">
+                    <div>Main Scale $A$: <strong id="lbl-msr" style="color: var(--cyan-glow);">2.00 mm</strong></div>
+                    <div>Circular Scale $C = B \times LC$: <strong id="lbl-csr" style="color: var(--amber-glow);">0.00 mm</strong></div>
+                    <div>Total Diameter $D$: <strong id="lbl-total-d" style="color: var(--green-glow);">2.00 mm</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: DUAL GRAPHICAL ANALYSIS -->
+        <div id="view-graphs" style="display: none; flex-direction: column; gap: 16px;">
+            <div class="card-header">
+                <span class="card-title">Dual Graphical Analysis</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-secondary" onclick="switchGraphMode('t_vs_1D2')" id="btn-graph1">Graph 1: t vs 1/D²</button>
+                    <button class="btn-secondary" onclick="switchGraphMode('v_vs_r2')" id="btn-graph2">Graph 2: v vs r²</button>
+                </div>
+            </div>
+
+            <div class="canvas-container" style="height: 380px;">
+                <canvas id="graphCanvas" width="650" height="360"></canvas>
+            </div>
+
+            <div class="terminal-readout" id="graph-slope-terminal">
+Log at least 2 data points to generate linear regression lines and calculate viscosity from graph slope!
+            </div>
+        </div>
+
+        <!-- TAB 5: SUPPLEMENTARY INFORMATION & WORKED CALCULATIONS -->
+        <div id="view-suppl" style="display: none; flex-direction: column; gap: 14px;">
+            <div class="card-header">
+                <span class="card-title">Supplementary Information & Detailed Worked Calculations</span>
+            </div>
+
+            <div class="formula-card" style="line-height: 1.7; font-size: 0.85rem;">
+                <h3 style="color: var(--cyan-glow);">1. Theoretical Foundation & Formula Derivation</h3>
+                <p>When a small steel ball bearing of radius $r$ and density $\rho$ falls vertically under gravity through a viscous liquid (Glycerin) of density $\sigma$, three forces act on it:</p>
+                <div class="math-box">
+                    $$\text{Downward Weight (Gravity): } W = m g = \frac{4}{3}\pi r^3 \rho g$$
+                    $$\text{Upward Buoyant Force (Archimedes): } U = \frac{4}{3}\pi r^3 \sigma g$$
+                    $$\text{Upward Viscous Drag Force (Stoke's Law): } F = 6\pi\eta r v$$
+                </div>
+                <p>At equilibrium (terminal velocity $v$), upward forces equal downward force ($W = F + U$):</p>
+                <div class="math-box">
+                    $$\frac{4}{3}\pi r^3 \rho g = 6\pi\eta r v + \frac{4}{3}\pi r^3 \sigma g$$
+                    $$6\pi\eta r v = \frac{4}{3}\pi r^3 (\rho - \sigma) g \implies \eta = \frac{2}{9} \frac{(\rho - \sigma) g r^2}{v}$$
+                </div>
+
+                <h3 style="color: var(--cyan-glow); margin-top: 12px;">2. Diameter Formula Transformation ($t \cdot D^2$)</h3>
+                <p>Substituting terminal velocity $v = \frac{L}{t}$ and radius $r = \frac{D}{2}$ into Stoke's equation:</p>
+                <div class="math-box">
+                    $$\eta = \frac{2}{9} \frac{(\rho - \sigma) g \left(\frac{D}{2}\right)^2}{\frac{L}{t}} = \frac{(\rho - \sigma) g}{18 L} t D^2$$
+                </div>
+                <p>Since $\eta$ is constant at a fixed temperature, $t D^2 = \text{constant}$. Thus, a plot of $t$ vs $\frac{1}{D^2}$ is a straight line passing through origin!</p>
+
+                <h3 style="color: var(--cyan-glow); margin-top: 12px;">3. Step-by-Step Sample Worked Calculations</h3>
+                <div id="worked-calculations-container" class="terminal-readout" style="background: #080c14; border: 1px solid var(--border-dim); color: #d1d5db;">
+<!-- Populated dynamically with exact numbers from current observations -->
+                </div>
+
+                <h3 style="color: var(--cyan-glow); margin-top: 12px;">4. Units & Conversion Matrix</h3>
+                <div class="math-box" style="font-size: 0.82rem;">
+                    $$1\text{ Pa}\cdot\text{s} = 1\text{ N}\cdot\text{s}\cdot\text{m}^{-2} = 1\text{ kg}\cdot\text{m}^{-1}\cdot\text{s}^{-1} = 1\text{ deca poise} = 10\text{ poise}$$
+                    $$1\text{ Poise} = 1\text{ dyne}\cdot\text{s}\cdot\text{cm}^{-2} = 1\text{ g}\cdot\text{cm}^{-1}\cdot\text{s}^{-1} = 0.1\text{ Pa}\cdot\text{s}$$
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: THEORY & DERIVATIONS -->
+        <div id="view-theory" style="display: none; flex-direction: column; gap: 12px;">
+            <div class="formula-card" style="font-size: 0.85rem; line-height: 1.6;">
+                <h3 style="color: var(--cyan-glow); margin-bottom: 6px;">EXPERIMENT OBJECTIVE</h3>
+                <p>Determination of the coefficient of viscosity of liquid by Stoke's method by graphically analyzing the variation of time taken for metal balls of different diameters to travel the same distance ($L$) in the given liquid with respect to their diameters.</p>
+                
+                <h3 style="color: var(--cyan-glow); margin-top: 12px; margin-bottom: 6px;">APPARATUS REQUIRED</h3>
+                <ol style="margin-left: 20px;">
+                    <li>Viscous liquid (Glycerin)</li>
+                    <li>Tall glass jar</li>
+                    <li>Steel ball bearings (Selection from 12 balls pool)</li>
+                    <li>A stop watch</li>
+                    <li>A screw gauge (Micrometer)</li>
+                    <li>Meter scale</li>
+                    <li>Rubber bands or thread</li>
+                    <li>A thermometer</li>
+                </ol>
+
+                <h3 style="color: var(--cyan-glow); margin-top: 12px; margin-bottom: 6px;">NEWTON'S VISCOSITY LAW & STOKE'S LAW</h3>
+                <p>According to Newton's Law of Viscosity, the tangential viscous force $F$ between fluid layers of area $A$ moving with velocity gradient $\frac{dv}{dx}$ is:</p>
+                <div class="math-box">
+                    $$F = -\eta A \frac{dv}{dx}$$
+                </div>
+                <p>According to Stoke's law, for a sphere of radius $r$ moving with velocity $v$:</p>
+                <div class="math-box">
+                    $$F = 6\pi\eta r v$$
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 7: VIVA VOCE QUESTIONS -->
+        <div id="view-viva" style="display: none; flex-direction: column; gap: 12px;">
+            <div class="card-header">
+                <span class="card-title">Viva Voce Questions & Answers</span>
+            </div>
+
+            <div class="viva-container">
+                <div class="viva-item open">
+                    <div class="viva-question" onclick="toggleViva(this)">1. What is viscosity? <span>&#9660;</span></div>
+                    <div class="viva-answer">Viscosity is the intrinsic property of a fluid by virtue of which it opposes relative motion between its consecutive layers.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">2. State Stoke's law. <span>&#9660;</span></div>
+                    <div class="viva-answer">Stoke's law states that when a spherical body of radius $r$ moves through a viscous medium of viscosity $\eta$ with terminal velocity $v$, the viscous drag force is $F = 6\pi\eta r v$.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">3. Distinguish between streamline and turbulent motion of a liquid. <span>&#9660;</span></div>
+                    <div class="viva-answer">In streamline flow, fluid velocity at any point remains constant in magnitude and direction over time. In turbulent flow, velocity exceeds critical velocity, creating chaotic motion and eddies.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">4. Define terminal velocity. <span>&#9660;</span></div>
+                    <div class="viva-answer">Terminal velocity is the maximum constant velocity acquired by a spherical body falling through a viscous fluid when downward weight is balanced by upward buoyant force and viscous drag.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">5. Define coefficient of viscosity. <span>&#9660;</span></div>
+                    <div class="viva-answer">The coefficient of viscosity ($\eta$) is defined as the tangential backward force per unit area of layer required to maintain unit velocity gradient normal to the direction of flow.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">6. What is steady flow? <span>&#9660;</span></div>
+                    <div class="viva-answer">Flow is steady when fluid parameters (velocity, pressure, density) at any given position remain invariant with time.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">7. Find the dimension of $\eta$. <span>&#9660;</span></div>
+                    <div class="viva-answer">Dimension = $[M L^{-1} T^{-1}]$.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">8. What are units of coefficient of viscosity in CGS and SI? <span>&#9660;</span></div>
+                    <div class="viva-answer">In CGS: Poise ($\text{g}\cdot\text{cm}^{-1}\cdot\text{s}^{-1}$). In SI: Decapoise or $\text{Pa}\cdot\text{s}$ ($\text{kg}\cdot\text{m}^{-1}\cdot\text{s}^{-1}$). Note: $1\text{ decapoise} = 10\text{ poise}$.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">9. What is critical velocity? <span>&#9660;</span></div>
+                    <div class="viva-answer">Critical velocity is the threshold velocity of fluid flow up to which motion remains streamline and beyond which it turns turbulent.</div>
+                </div>
+
+                <div class="viva-item">
+                    <div class="viva-question" onclick="toggleViva(this)">10. What do you mean by viscous force? <span>&#9660;</span></div>
+                    <div class="viva-answer">Viscous force is the internal fluid friction acting tangentially between relative moving layers of fluid.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- CONSTANTS & STATE ---
+    const G_CGS = 980.0;
+    const RHO_STEEL = 7.80;
+    const SIGMA_GLYCERIN = 1.26;
+
+    // 12 FULL METAL BALLS POOL (A: 3.00 mm, B: 4.00 mm, C: 5.00 mm, ..., L: 14.00 mm)
+    const masterBallsPool = [
+        { id: 1, name: 'Ball 1', label: 'A', d_nominal_mm: 3.00, msr_mm: 3.00, csr: 0 },
+        { id: 2, name: 'Ball 2', label: 'B', d_nominal_mm: 4.00, msr_mm: 4.00, csr: 0 },
+        { id: 3, name: 'Ball 3', label: 'C', d_nominal_mm: 5.00, msr_mm: 5.00, csr: 0 },
+        { id: 4, name: 'Ball 4', label: 'D', d_nominal_mm: 6.00, msr_mm: 6.00, csr: 0 },
+        { id: 5, name: 'Ball 5', label: 'E', d_nominal_mm: 7.00, msr_mm: 7.00, csr: 0 },
+        { id: 6, name: 'Ball 6', label: 'F', d_nominal_mm: 8.00, msr_mm: 8.00, csr: 0 },
+        { id: 7, name: 'Ball 7', label: 'G', d_nominal_mm: 9.00, msr_mm: 9.00, csr: 0 },
+        { id: 8, name: 'Ball 8', label: 'H', d_nominal_mm: 10.00, msr_mm: 10.00, csr: 0 },
+        { id: 9, name: 'Ball 9', label: 'I', d_nominal_mm: 11.00, msr_mm: 11.00, csr: 0 },
+        { id: 10, name: 'Ball 10', label: 'J', d_nominal_mm: 12.00, msr_mm: 12.00, csr: 0 },
+        { id: 11, name: 'Ball 11', label: 'K', d_nominal_mm: 13.00, msr_mm: 13.00, csr: 0 },
+        { id: 12, name: 'Ball 12', label: 'L', d_nominal_mm: 14.00, msr_mm: 14.00, csr: 0 }
+    ];
+
+    let selectedIndicesPool = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    let state = {
+        selectedActiveBallIndex: 0,
+        distanceL_cm: 30.0,
+        temperatureC: 20.0,
+        timerMode: 'auto',
+        graphMode: 't_vs_1D2',
+        
+        isSimulating: false,
+        ballPosY: 45,
+        ballVelY: 0,
+        elapsedTimeSec: 0.0,
+        timerRunning: false,
+        timerPassedMarkA: false,
+        timerPassedMarkB: false,
+        lastAnimFrame: null,
+
+        msr_mm: 3.00,
+        csr: 0,
+
+        records: []
+    };
+
+    function getTheoreticalViscosity(tempC) {
+        return 14.12 * Math.exp(-0.055 * (tempC - 20.0));
+    }
+
+    const fCanvas = document.getElementById('fluidCanvas');
+    const fCtx = fCanvas.getContext('2d');
+
+    const sCanvas = document.getElementById('screwCanvas');
+    const sCtx = sCanvas.getContext('2d');
+
+    const gCanvas = document.getElementById('graphCanvas');
+    const gCtx = gCanvas.getContext('2d');
+
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('meta-date').value = new Date().toLocaleDateString();
+        render12BallsPoolUI();
+        renderActiveBallsGridUI();
+        selectActiveBall(0);
+        renderFluidCanvas();
+        renderScrewGaugeCanvas();
+        syncAllTablesUI();
+    });
+
+    function render12BallsPoolUI() {
+        const poolContainer = document.getElementById('ball-pool-container');
+        poolContainer.innerHTML = '';
+
+        masterBallsPool.forEach((b, idx) => {
+            let isChecked = selectedIndicesPool.includes(idx);
+            let div = document.createElement('div');
+            div.className = `pool-item ${isChecked ? 'selected' : ''}`;
+            div.onclick = (e) => {
+                if (e.target.tagName !== 'INPUT') toggleBallSelection(idx);
+            };
+            div.innerHTML = `
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleBallSelection(${idx})">
+                <span><strong>${b.name}</strong></span>
+                <span style="color: var(--cyan-glow); font-weight:bold;">${b.d_nominal_mm.toFixed(2)} mm</span>
+            `;
+            poolContainer.appendChild(div);
+        });
+
+        document.getElementById('lbl-chosen-count').innerText = `${selectedIndicesPool.length}/12 Selected`;
+        document.getElementById('lbl-chosen-count').style.color = selectedIndicesPool.length > 0 ? 'var(--green-glow)' : 'var(--red-glow)';
+    }
+
+    function toggleBallSelection(idx) {
+        let pos = selectedIndicesPool.indexOf(idx);
+        if (pos >= 0) {
+            if (selectedIndicesPool.length <= 1) {
+                alert("You must keep at least 1 ball selected for experiment!");
+                render12BallsPoolUI();
+                return;
+            }
+            selectedIndicesPool.splice(pos, 1);
+        } else {
+            selectedIndicesPool.push(idx);
+            selectedIndicesPool.sort((a, b) => a - b);
+        }
+
+        render12BallsPoolUI();
+        renderActiveBallsGridUI();
+        selectActiveBall(0);
+        syncAllTablesUI();
+    }
+
+    function selectAll12Balls() {
+        selectedIndicesPool = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        render12BallsPoolUI();
+        renderActiveBallsGridUI();
+        selectActiveBall(0);
+        syncAllTablesUI();
+    }
+
+    function renderActiveBallsGridUI() {
+        const grid = document.getElementById('active-balls-grid');
+        grid.innerHTML = '';
+
+        selectedIndicesPool.forEach((poolIdx, activeIdx) => {
+            let b = masterBallsPool[poolIdx];
+            let letterLabel = String.fromCharCode(65 + activeIdx);
+            let btn = document.createElement('button');
+            btn.className = `ball-btn ${activeIdx === state.selectedActiveBallIndex ? 'active' : ''}`;
+            btn.innerHTML = `Ball ${letterLabel} (${b.d_nominal_mm.toFixed(1)}mm)`;
+            btn.onclick = () => selectActiveBall(activeIdx);
+            grid.appendChild(btn);
+        });
+    }
+
+    function selectActiveBall(activeIdx) {
+        if (activeIdx >= selectedIndicesPool.length) activeIdx = 0;
+        state.selectedActiveBallIndex = activeIdx;
+        
+        let poolIdx = selectedIndicesPool[activeIdx];
+        let b = masterBallsPool[poolIdx];
+
+        state.msr_mm = b.msr_mm;
+        state.csr = b.csr;
+
+        document.querySelectorAll('#active-balls-grid .ball-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', i === activeIdx);
+        });
+
+        document.getElementById('slider-cs').value = b.csr;
+        updateScrewGaugeUI();
+        resetBallAnimation();
+    }
+
+    function updateDistanceL() {
+        state.distanceL_cm = parseFloat(document.getElementById('slider-L').value);
+        document.getElementById('txt-dist-L').innerText = state.distanceL_cm.toFixed(1);
+        document.getElementById('lbl-param-L').innerText = `${state.distanceL_cm.toFixed(1)} cm`;
+        resetBallAnimation();
+    }
+
+    function updateTemperature() {
+        state.temperatureC = parseFloat(document.getElementById('slider-temp').value);
+        document.getElementById('txt-temp').innerText = state.temperatureC.toFixed(1);
+    }
+
+    function setTimerMode(mode) {
+        state.timerMode = mode;
+        document.getElementById('btn-mode-auto').style.borderColor = mode === 'auto' ? 'var(--cyan-glow)' : 'var(--border-dim)';
+        document.getElementById('btn-mode-manual').style.borderColor = mode === 'manual' ? 'var(--cyan-glow)' : 'var(--border-dim)';
+        document.getElementById('btn-manual-timer').disabled = (mode === 'auto');
+        document.getElementById('txt-mode-label').innerText = mode === 'auto' ? 'AUTOMATIC SENSOR' : 'MANUAL PUSH BUTTON';
+    }
+
+    function switchGraphMode(mode) {
+        state.graphMode = mode;
+        document.getElementById('btn-graph1').style.borderColor = mode === 't_vs_1D2' ? 'var(--cyan-glow)' : 'var(--border-dim)';
+        document.getElementById('btn-graph2').style.borderColor = mode === 'v_vs_r2' ? 'var(--cyan-glow)' : 'var(--border-dim)';
+        renderGraphCanvas();
+    }
+
+    function resetBallAnimation() {
+        state.isSimulating = false;
+        state.ballPosY = 45;
+        state.ballVelY = 0;
+        state.elapsedTimeSec = 0.0;
+        state.timerRunning = false;
+        state.timerPassedMarkA = false;
+        state.timerPassedMarkB = false;
+        document.getElementById('lbl-timer').innerText = "0.00 s";
+        document.getElementById('lbl-timer').classList.remove('active');
+        document.getElementById('lbl-status-badge').innerText = "READY TO DROP";
+        document.getElementById('lbl-status-badge').style.borderColor = "var(--amber-glow)";
+        document.getElementById('lbl-status-badge').style.color = "var(--amber-glow)";
+        renderFluidCanvas();
+    }
+
+    function dropBall() {
+        if (state.isSimulating) resetBallAnimation();
+
+        state.isSimulating = true;
+        state.ballPosY = 45;
+        state.ballVelY = 0;
+        state.elapsedTimeSec = 0.0;
+        state.timerRunning = false;
+        state.timerPassedMarkA = false;
+        state.timerPassedMarkB = false;
+        state.lastAnimFrame = performance.now();
+
+        document.getElementById('lbl-status-badge').innerText = "FALLING IN GLYCERIN";
+        document.getElementById('lbl-status-badge').style.borderColor = "var(--cyan-glow)";
+        document.getElementById('lbl-status-badge').style.color = "var(--cyan-glow)";
+
+        requestAnimationFrame(animLoop);
+    }
+
+    function animLoop(timestamp) {
+        if (!state.isSimulating) return;
+
+        let dt = (timestamp - state.lastAnimFrame) / 1000;
+        if (dt > 0.05) dt = 0.05;
+        state.lastAnimFrame = timestamp;
+
+        let currentTotalD_mm = state.msr_mm + (state.csr * 0.01);
+        let r_cm = currentTotalD_mm / 20.0;
+        let eta = getTheoreticalViscosity(state.temperatureC);
+        
+        let v_terminal = (2.0 / 9.0) * (G_CGS * (RHO_STEEL - SIGMA_GLYCERIN) * Math.pow(r_cm, 2)) / eta;
+
+        let subSteps = 5;
+        let sdt = dt / subSteps;
+        let v_cgs = state.ballVelY;
+
+        for (let s = 0; s < subSteps; s++) {
+            let accel = G_CGS * (1.0 - SIGMA_GLYCERIN / RHO_STEEL) - ((9.0 * eta) / (2.0 * RHO_STEEL * Math.pow(r_cm, 2))) * v_cgs;
+            v_cgs += accel * sdt;
+        }
+        state.ballVelY = v_cgs;
+
+        let markAY = 110;
+        let markBY = markAY + (state.distanceL_cm * 4.0);
+
+        // Visual speed boost so small balls (Ball A, Ball B) move visibly and smoothly without taking 1.5 minutes visually
+        let visualPxPerSec = Math.max(35.0, v_cgs * 7.5);
+        state.ballPosY += visualPxPerSec * dt;
+
+        if (state.ballPosY >= markAY && !state.timerPassedMarkA) {
+            state.timerPassedMarkA = true;
+            if (state.timerMode === 'auto') {
+                state.timerRunning = true;
+                document.getElementById('lbl-timer').classList.add('active');
+            }
+        }
+
+        if (state.ballPosY >= markBY && !state.timerPassedMarkB) {
+            state.timerPassedMarkB = true;
+            if (state.timerMode === 'auto') {
+                state.timerRunning = false;
+                document.getElementById('lbl-timer').classList.remove('active');
+                
+                let exactTimeSec = state.distanceL_cm / v_terminal;
+                let noise = (Math.random() - 0.5) * 0.03;
+                state.elapsedTimeSec = exactTimeSec + noise;
+                document.getElementById('lbl-timer').innerText = `${state.elapsedTimeSec.toFixed(2)} s`;
+                document.getElementById('lbl-status-badge').innerText = "REACHED MARK B";
+                document.getElementById('lbl-status-badge').style.borderColor = "var(--green-glow)";
+                document.getElementById('lbl-status-badge').style.color = "var(--green-glow)";
+            }
+        }
+
+        if (state.timerRunning) {
+            // Scale displayed timer tick relative to physical fall time
+            let visualDistanceBetweenMarks = markBY - markAY;
+            let visualTimeFromAToB = visualDistanceBetweenMarks / visualPxPerSec;
+            let physicalTimeFromAToB = state.distanceL_cm / v_terminal;
+            let timeMultiplier = physicalTimeFromAToB / visualTimeFromAToB;
+
+            state.elapsedTimeSec += dt * timeMultiplier;
+            document.getElementById('lbl-timer').innerText = `${state.elapsedTimeSec.toFixed(2)} s`;
+        }
+
+        renderFluidCanvas();
+
+        if (state.ballPosY < 415) {
+            requestAnimationFrame(animLoop);
+        } else {
+            state.isSimulating = false;
+        }
+    }
+
+    function toggleManualTimer() {
+        if (state.timerMode !== 'manual') return;
+        state.timerRunning = !state.timerRunning;
+        if (state.timerRunning) {
+            document.getElementById('lbl-timer').classList.add('active');
+        } else {
+            document.getElementById('lbl-timer').classList.remove('active');
+        }
+    }
+
+    function renderFluidCanvas() {
+        fCtx.clearRect(0, 0, fCanvas.width, fCanvas.height);
+
+        let cx = fCanvas.width / 2;
+        let cylinderW = 110;
+        let cylinderH = 400;
+        let topY = 30;
+
+        let liqGrad = fCtx.createLinearGradient(cx - cylinderW/2, 0, cx + cylinderW/2, 0);
+        liqGrad.addColorStop(0, 'rgba(255, 235, 170, 0.25)');
+        liqGrad.addColorStop(0.3, 'rgba(255, 215, 100, 0.45)');
+        liqGrad.addColorStop(0.7, 'rgba(255, 215, 100, 0.45)');
+        liqGrad.addColorStop(1, 'rgba(200, 160, 50, 0.25)');
+
+        fCtx.fillStyle = liqGrad;
+        fCtx.fillRect(cx - cylinderW/2, topY + 15, cylinderW, cylinderH - 15);
+
+        fCtx.strokeStyle = '#607d8b';
+        fCtx.lineWidth = 4;
+        fCtx.strokeRect(cx - cylinderW/2, topY, cylinderW, cylinderH);
+
+        fCtx.fillStyle = 'rgba(255, 240, 200, 0.6)';
+        fCtx.beginPath();
+        fCtx.ellipse(cx, topY + 15, cylinderW/2, 10, 0, 0, 2 * Math.PI);
+        fCtx.fill();
+        fCtx.stroke();
+
+        let markAY = topY + 80;
+        fCtx.strokeStyle = '#00f0ff';
+        fCtx.lineWidth = 2;
+        fCtx.setLineDash([4, 4]);
+        fCtx.beginPath();
+        fCtx.moveTo(cx - cylinderW/2 - 25, markAY);
+        fCtx.lineTo(cx + cylinderW/2 + 25, markAY);
+        fCtx.stroke();
+        fCtx.setLineDash([]);
+
+        fCtx.fillStyle = '#00f0ff';
+        fCtx.font = 'bold 12px sans-serif';
+        fCtx.fillText("MARK A", cx - cylinderW/2 - 75, markAY + 4);
+
+        let markBY = markAY + (state.distanceL_cm * 4.0);
+        fCtx.strokeStyle = '#ffab00';
+        fCtx.lineWidth = 2;
+        fCtx.setLineDash([4, 4]);
+        fCtx.beginPath();
+        fCtx.moveTo(cx - cylinderW/2 - 25, markBY);
+        fCtx.lineTo(cx + cylinderW/2 + 25, markBY);
+        fCtx.stroke();
+        fCtx.setLineDash([]);
+
+        fCtx.fillStyle = '#ffab00';
+        fCtx.fillText("MARK B", cx - cylinderW/2 - 75, markBY + 4);
+
+        fCtx.strokeStyle = '#ffffff';
+        fCtx.lineWidth = 1.5;
+        fCtx.beginPath();
+        fCtx.moveTo(cx + cylinderW/2 + 35, markAY);
+        fCtx.lineTo(cx + cylinderW/2 + 35, markBY);
+        fCtx.stroke();
+
+        fCtx.fillStyle = '#ffffff';
+        fCtx.font = '11px sans-serif';
+        fCtx.fillText(`L = ${state.distanceL_cm.toFixed(1)} cm`, cx + cylinderW/2 + 42, (markAY + markBY)/2);
+
+        let totalD_mm = state.msr_mm + (state.csr * 0.01);
+        let poolIdx = selectedIndicesPool[state.selectedActiveBallIndex];
+        let letterLabel = String.fromCharCode(65 + state.selectedActiveBallIndex);
+
+        let ballRadiusPx = Math.max(6.5, (totalD_mm / 2.0) * 3.2);
+        let bY = topY + state.ballPosY;
+
+        if (state.isSimulating) {
+            fCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            fCtx.lineWidth = 1;
+            fCtx.setLineDash([2, 4]);
+            fCtx.beginPath();
+            fCtx.moveTo(cx - ballRadiusPx * 0.5, bY - ballRadiusPx);
+            fCtx.lineTo(cx - ballRadiusPx * 0.5, Math.max(topY + 15, bY - 35));
+            fCtx.moveTo(cx + ballRadiusPx * 0.5, bY - ballRadiusPx);
+            fCtx.lineTo(cx + ballRadiusPx * 0.5, Math.max(topY + 15, bY - 35));
+            fCtx.stroke();
+            fCtx.setLineDash([]);
+        }
+
+        let ballGrad = fCtx.createRadialGradient(cx - ballRadiusPx*0.3, bY - ballRadiusPx*0.3, 1, cx, bY, ballRadiusPx);
+        ballGrad.addColorStop(0, '#ffffff');
+        ballGrad.addColorStop(0.4, '#00e5ff');
+        ballGrad.addColorStop(0.8, '#00838f');
+        ballGrad.addColorStop(1, '#004d40');
+
+        fCtx.fillStyle = ballGrad;
+        fCtx.beginPath();
+        fCtx.arc(cx, bY, ballRadiusPx, 0, 2 * Math.PI);
+        fCtx.fill();
+
+        fCtx.strokeStyle = '#00f0ff';
+        fCtx.lineWidth = 2;
+        fCtx.stroke();
+
+        fCtx.fillStyle = '#ffffff';
+        fCtx.font = 'bold 11px sans-serif';
+        fCtx.fillText(`Ball ${letterLabel} (${totalD_mm.toFixed(2)} mm)`, cx + ballRadiusPx + 10, bY + 4);
+
+        fCtx.strokeStyle = 'rgba(0, 240, 255, 0.6)';
+        fCtx.lineWidth = 1;
+        fCtx.beginPath();
+        fCtx.moveTo(cx + ballRadiusPx + 2, bY);
+        fCtx.lineTo(cx + ballRadiusPx + 8, bY);
+        fCtx.stroke();
+
+        if (state.isSimulating) {
+            fCtx.strokeStyle = '#ff1744';
+            fCtx.lineWidth = 2;
+            fCtx.beginPath();
+            fCtx.moveTo(cx, bY + ballRadiusPx);
+            fCtx.lineTo(cx, bY + ballRadiusPx + 22);
+            fCtx.stroke();
+            fCtx.fillStyle = '#ff1744';
+            fCtx.beginPath();
+            fCtx.moveTo(cx - 4, bY + ballRadiusPx + 18);
+            fCtx.lineTo(cx + 4, bY + ballRadiusPx + 18);
+            fCtx.lineTo(cx, bY + ballRadiusPx + 25);
+            fCtx.fill();
+
+            fCtx.strokeStyle = '#00e676';
+            fCtx.lineWidth = 2;
+            fCtx.beginPath();
+            fCtx.moveTo(cx, bY - ballRadiusPx);
+            fCtx.lineTo(cx, bY - ballRadiusPx - 22);
+            fCtx.stroke();
+            fCtx.fillStyle = '#00e676';
+            fCtx.beginPath();
+            fCtx.moveTo(cx - 4, bY - ballRadiusPx - 18);
+            fCtx.lineTo(cx + 4, bY - ballRadiusPx - 18);
+            fCtx.lineTo(cx, bY - ballRadiusPx - 25);
+            fCtx.fill();
+        }
+    }
+
+    function updateScrewGaugeUI() {
+        state.csr = parseInt(document.getElementById('slider-cs').value);
+        let total_d = state.msr_mm + (state.csr * 0.01);
+
+        document.getElementById('txt-cs-reading').innerText = state.csr;
+        document.getElementById('lbl-msr').innerText = `${state.msr_mm.toFixed(2)} mm`;
+        document.getElementById('lbl-csr').innerText = `${(state.csr * 0.01).toFixed(2)} mm`;
+        document.getElementById('lbl-total-d').innerText = `${total_d.toFixed(2)} mm`;
+        document.getElementById('txt-selected-d').innerText = total_d.toFixed(2);
+
+        renderScrewGaugeCanvas();
+    }
+
+    function renderScrewGaugeCanvas() {
+        sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+
+        sCtx.fillStyle = '#1c2436';
+        sCtx.fillRect(15, 40, 125, 140);
+        sCtx.strokeStyle = '#37474f';
+        sCtx.lineWidth = 3;
+        sCtx.strokeRect(15, 40, 125, 140);
+
+        sCtx.fillStyle = '#90a4ae';
+        sCtx.font = 'bold 12px sans-serif';
+        sCtx.fillText("ANVIL", 35, 120);
+
+        let total_d = state.msr_mm + (state.csr * 0.01);
+        let gapPx = Math.min(150, total_d * 10);
+
+        sCtx.fillStyle = '#b0bec5';
+        sCtx.fillRect(140, 95, 20, 30);
+
+        let ballX = 160 + gapPx / 2;
+        let ballR = Math.min(60, Math.max(12, total_d * 4));
+        sCtx.fillStyle = '#cfd8dc';
+        sCtx.beginPath();
+        sCtx.arc(ballX, 110, ballR, 0, 2 * Math.PI);
+        sCtx.fill();
+
+        sCtx.fillStyle = '#263238';
+        sCtx.fillRect(160 + gapPx, 90, 210, 40);
+        sCtx.strokeStyle = '#455a64';
+        sCtx.strokeRect(160 + gapPx, 90, 210, 40);
+
+        sCtx.strokeStyle = '#00f0ff';
+        sCtx.lineWidth = 2;
+        sCtx.beginPath();
+        sCtx.moveTo(160 + gapPx, 110);
+        sCtx.lineTo(370 + gapPx, 110);
+        sCtx.stroke();
+
+        sCtx.strokeStyle = '#ffffff';
+        sCtx.lineWidth = 1;
+        let maxMark = Math.min(16, Math.ceil(total_d) + 1);
+        for (let m = 0; m <= maxMark; m++) {
+            let mx = 170 + gapPx + (m * 11);
+            sCtx.beginPath();
+            sCtx.moveTo(mx, 110);
+            sCtx.lineTo(mx, 95);
+            sCtx.stroke();
+            sCtx.fillStyle = '#ffffff';
+            sCtx.font = '9px sans-serif';
+            sCtx.fillText(m.toString(), mx - 3, 90);
+        }
+
+        sCtx.fillStyle = '#37474f';
+        sCtx.fillRect(320 + gapPx, 70, 110, 80);
+        sCtx.strokeStyle = '#ffab00';
+        sCtx.lineWidth = 2;
+        sCtx.strokeRect(320 + gapPx, 70, 110, 80);
+
+        sCtx.fillStyle = '#ffab00';
+        sCtx.font = 'bold 11px monospace';
+        sCtx.fillText(`C.S. = ${state.csr}`, 340 + gapPx, 114);
+    }
+
+    function logObservationRow() {
+        let timeSec = state.elapsedTimeSec;
+        if (timeSec <= 0) {
+            let currentTotalD_mm = state.msr_mm + (state.csr * 0.01);
+            let r_cm = currentTotalD_mm / 20.0;
+            let eta = getTheoreticalViscosity(state.temperatureC);
+            let v_terminal = (2.0 / 9.0) * (G_CGS * (RHO_STEEL - SIGMA_GLYCERIN) * Math.pow(r_cm, 2)) / eta;
+            timeSec = state.distanceL_cm / v_terminal + (Math.random() - 0.5) * 0.03;
+        }
+
+        let poolIdx = selectedIndicesPool[state.selectedActiveBallIndex];
+        let b = masterBallsPool[poolIdx];
+        let letterLabel = String.fromCharCode(65 + state.selectedActiveBallIndex);
+
+        let msr = state.msr_mm;
+        let csr = state.csr;
+        let val_cs_mm = csr * 0.01;
+        let total_d_mm = msr + val_cs_mm;
+        let r_mm = total_d_mm / 2.0;
+        let r_cm = total_d_mm / 20.0;
+        let v_cm_s = state.distanceL_cm / timeSec;
+
+        let eta_poise = (2.0 / 9.0) * G_CGS * (RHO_STEEL - SIGMA_GLYCERIN) * (Math.pow(r_cm, 2) / v_cm_s);
+
+        if (state.records.length >= 10) {
+            state.records.shift();
+        }
+
+        state.records.push({
+            obsNo: state.records.length + 1,
+            ballId: letterLabel,
+            ballName: b.name,
+            msr: msr,
+            csr: csr,
+            val_cs_mm: val_cs_mm,
+            total_d_mm: total_d_mm,
+            r_mm: r_mm,
+            r_cm: r_cm,
+            timeSec: timeSec,
+            v_cm_s: v_cm_s,
+            eta_poise: eta_poise
+        });
+
+        state.records.forEach((rec, idx) => {
+            rec.obsNo = idx + 1;
+        });
+
+        syncAllTablesUI();
+        renderGraphCanvas();
+        renderWorkedCalculations();
+    }
+
+    function resetObservations() {
+        state.records = [];
+        syncAllTablesUI();
+        renderGraphCanvas();
+        renderWorkedCalculations();
+    }
+
+    function syncAllTablesUI() {
+        let n = state.records.length;
+        let sumEta = 0;
+        state.records.forEach(r => sumEta += r.eta_poise);
+        let meanEta = n > 0 ? sumEta / n : 0;
+
+        const maxTableRows = 10;
+
+        // Pioneer Table 1
+        const t1Body = document.getElementById('table1-body');
+        t1Body.innerHTML = '';
+        for (let i = 0; i < maxTableRows; i++) {
+            let tr = document.createElement('tr');
+            if (i < n) {
+                let r = state.records[i];
+                tr.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${r.ballId}</td>
+                    <td>${r.msr.toFixed(2)}</td>
+                    <td>${r.csr}</td>
+                    <td>${r.val_cs_mm.toFixed(2)}</td>
+                    <td style="color: var(--cyan-glow); font-weight: bold;">${r.total_d_mm.toFixed(2)}</td>
+                    <td>${r.total_d_mm.toFixed(2)}</td>
+                    <td>${r.r_mm.toFixed(2)}</td>
+                    <td style="color: var(--amber-glow); font-weight: bold;">${r.r_cm.toFixed(3)}</td>
+                `;
+            } else {
+                let letter = i < selectedIndicesPool.length ? String.fromCharCode(65 + i) : '-';
+                tr.innerHTML = `<td>${i + 1}</td><td>${letter}</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>`;
+            }
+            t1Body.appendChild(tr);
+        }
+
+        // Pioneer Table 2
+        const t2Body = document.getElementById('table2-body');
+        t2Body.innerHTML = '';
+        for (let i = 0; i < maxTableRows; i++) {
+            let tr = document.createElement('tr');
+            if (i < n) {
+                let r = state.records[i];
+                let html = `
+                    <td>${i + 1}</td>
+                    <td>${r.ballId}</td>
+                    <td style="color: var(--amber-glow); font-weight: bold;">${r.timeSec.toFixed(2)}</td>
+                    <td style="color: var(--blue-accent); font-weight: bold;">${r.v_cm_s.toFixed(2)}</td>
+                    <td style="color: var(--text-primary); font-weight: bold;">${r.eta_poise.toFixed(2)}</td>
+                `;
+                if (i === 0) {
+                    html += `<td rowspan="${maxTableRows}" class="mean-cell">${meanEta > 0 ? meanEta.toFixed(2) : '-'}</td>`;
+                }
+                tr.innerHTML = html;
+            } else {
+                let letter = i < selectedIndicesPool.length ? String.fromCharCode(65 + i) : '-';
+                let html = `<td>${i + 1}</td><td>${letter}</td><td>-</td><td>-</td><td>-</td>`;
+                if (i === 0) {
+                    html += `<td rowspan="${maxTableRows}" class="mean-cell">-</td>`;
+                }
+                tr.innerHTML = html;
+            }
+            t2Body.appendChild(tr);
+        }
+
+        // Unified Set-II Table
+        const uBody = document.getElementById('unified-table-body');
+        uBody.innerHTML = '';
+        for (let i = 0; i < maxTableRows; i++) {
+            let tr = document.createElement('tr');
+            if (i < n) {
+                let r = state.records[i];
+                let html = `
+                    <td>${i + 1}</td>
+                    <td>${r.msr.toFixed(2)}</td>
+                    <td>${r.csr}</td>
+                    <td style="color: var(--cyan-glow); font-weight: bold;">${r.total_d_mm.toFixed(2)}</td>
+                    <td style="color: var(--amber-glow); font-weight: bold;">${r.timeSec.toFixed(2)}</td>
+                    <td style="color: var(--blue-accent);">${r.v_cm_s.toFixed(2)}</td>
+                    <td>${r.r_cm.toFixed(3)}</td>
+                    <td style="color: var(--text-primary); font-weight: bold;">${r.eta_poise.toFixed(2)}</td>
+                `;
+                if (i === 0) html += `<td rowspan="${maxTableRows}" class="mean-cell">${meanEta > 0 ? meanEta.toFixed(2) : '-'}</td>`;
+                tr.innerHTML = html;
+            } else {
+                let html = `<td>${i + 1}</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>`;
+                if (i === 0) html += `<td rowspan="${maxTableRows}" class="mean-cell">-</td>`;
+                tr.innerHTML = html;
+            }
+            uBody.appendChild(tr);
+        }
+    }
+
+    function renderGraphCanvas() {
+        gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+
+        let padL = 65, padR = 30, padT = 30, padB = 50;
+        let w = gCanvas.width - padL - padR;
+        let h = gCanvas.height - padT - padB;
+
+        gCtx.strokeStyle = '#37474f';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padL, padT);
+        gCtx.lineTo(padL, gCanvas.height - padB);
+        gCtx.lineTo(gCanvas.width - padR, gCanvas.height - padB);
+        gCtx.stroke();
+
+        let n = state.records.length;
+        let term = document.getElementById('graph-slope-terminal');
+
+        if (n < 2) {
+            term.innerText = "Log at least 2 data points to generate linear regression lines and calculate viscosity from graph slope!";
+            return;
+        }
+
+        if (state.graphMode === 't_vs_1D2') {
+            gCtx.fillStyle = '#90a4ae';
+            gCtx.font = '10px sans-serif';
+            gCtx.textAlign = 'center';
+            gCtx.fillText("Reciprocal Diameter Squared (1/D²) ──> cm⁻²", padL + w/2, gCanvas.height - 12);
+
+            gCtx.save();
+            gCtx.translate(18, padT + h/2);
+            gCtx.rotate(-Math.PI / 2);
+            gCtx.fillText("Time of Fall (t) ──> seconds", 0, 0);
+            gCtx.restore();
+
+            let maxX = 30.0, maxY = 30.0;
+            state.records.forEach(r => {
+                let d_cm = r.total_d_mm / 10.0;
+                let invD2 = 1.0 / (d_cm * d_cm);
+                if (invD2 > maxX) maxX = invD2 * 1.2;
+                if (r.timeSec > maxY) maxY = r.timeSec * 1.2;
+            });
+
+            let sumX = 0, sumY = 0, sumXY = 0, sumXSq = 0;
+            state.records.forEach(r => {
+                let d_cm = r.total_d_mm / 10.0;
+                let x = 1.0 / (d_cm * d_cm);
+                let y = r.timeSec;
+                sumX += x; sumY += y; sumXY += (x * y); sumXSq += (x * x);
+
+                let cx = padL + (x / maxX) * w;
+                let cy = gCanvas.height - padB - (y / maxY) * h;
+                gCtx.fillStyle = '#ffab00';
+                gCtx.beginPath();
+                gCtx.arc(cx, cy, 5, 0, 2 * Math.PI);
+                gCtx.fill();
+            });
+
+            let slope1 = (n * sumXY - sumX * sumY) / (n * sumXSq - Math.pow(sumX, 2));
+
+            let cx1 = padL, cy1 = gCanvas.height - padB;
+            let cx2 = padL + (maxX / maxX) * w;
+            let cy2 = gCanvas.height - padB - ((slope1 * maxX) / maxY) * h;
+
+            gCtx.strokeStyle = '#00f0ff';
+            gCtx.lineWidth = 2;
+            gCtx.beginPath();
+            gCtx.moveTo(cx1, cy1);
+            gCtx.lineTo(cx2, cy2);
+            gCtx.stroke();
+
+            let eta_graph1 = ((RHO_STEEL - SIGMA_GLYCERIN) * G_CGS) / (18.0 * state.distanceL_cm) * slope1;
+
+            term.innerHTML = `<div style="font-weight: bold; color: var(--cyan-glow); margin-bottom: 6px;">GRAPH 1 ANALYSIS: Time of Fall ($t$) vs Reciprocal Diameter Squared ($1/D^2$)</div>
+<div>Theoretical Line: $$t = m_1 \\cdot \\left(\\frac{1}{D^2}\\right)$$</div>
+<div>Extracted Graph Slope ($m_1 = t \\cdot D^2$): $$m_1 = ${slope1.toFixed(2)} \\text{ s}\\cdot\\text{cm}^2$$</div>
+<div>Viscosity Formula: $$\\eta_{\\text{graph1}} = \\frac{(\\rho - \\sigma) g}{18 L} \\cdot m_1 = \\frac{(7.80 - 1.26) \\times 980}{18 \\times ${state.distanceL_cm.toFixed(1)}} \\times ${slope1.toFixed(2)} = \\mathbf{${eta_graph1.toFixed(2)} \\text{ Poise}}$$</div>`;
+
+        } else {
+            gCtx.fillStyle = '#90a4ae';
+            gCtx.font = '10px sans-serif';
+            gCtx.textAlign = 'center';
+            gCtx.fillText("Radius Squared (r²) ──> cm²", padL + w/2, gCanvas.height - 12);
+
+            gCtx.save();
+            gCtx.translate(18, padT + h/2);
+            gCtx.rotate(-Math.PI / 2);
+            gCtx.fillText("Terminal Velocity (v) ──> cm/s", 0, 0);
+            gCtx.restore();
+
+            let maxX = 0.12, maxY = 12.0;
+            state.records.forEach(r => {
+                let r2 = Math.pow(r.r_cm, 2);
+                if (r2 > maxX) maxX = r2 * 1.2;
+                if (r.v_cm_s > maxY) maxY = r.v_cm_s * 1.2;
+            });
+
+            let sumX = 0, sumY = 0, sumXY = 0, sumXSq = 0;
+            state.records.forEach(r => {
+                let x = Math.pow(r.r_cm, 2);
+                let y = r.v_cm_s;
+                sumX += x; sumY += y; sumXY += (x * y); sumXSq += (x * x);
+
+                let cx = padL + (x / maxX) * w;
+                let cy = gCanvas.height - padB - (y / maxY) * h;
+                gCtx.fillStyle = '#ffab00';
+                gCtx.beginPath();
+                gCtx.arc(cx, cy, 5, 0, 2 * Math.PI);
+                gCtx.fill();
+            });
+
+            let slope2 = (n * sumXY - sumX * sumY) / (n * sumXSq - Math.pow(sumX, 2));
+
+            let cx1 = padL, cy1 = gCanvas.height - padB;
+            let cx2 = padL + (maxX / maxX) * w;
+            let cy2 = gCanvas.height - padB - ((slope2 * maxX) / maxY) * h;
+
+            gCtx.strokeStyle = '#00f0ff';
+            gCtx.lineWidth = 2;
+            gCtx.beginPath();
+            gCtx.moveTo(cx1, cy1);
+            gCtx.lineTo(cx2, cy2);
+            gCtx.stroke();
+
+            let eta_graph2 = (2.0 * (RHO_STEEL - SIGMA_GLYCERIN) * G_CGS) / (9.0 * slope2);
+
+            term.innerHTML = `<div style="font-weight: bold; color: var(--cyan-glow); margin-bottom: 6px;">GRAPH 2 ANALYSIS: Terminal Velocity ($v$) vs Radius Squared ($r^2$)</div>
+<div>Theoretical Line: $$v = m_2 \\cdot r^2$$</div>
+<div>Extracted Graph Slope ($m_2 = v / r^2$): $$m_2 = ${slope2.toFixed(2)} \\text{ cm}^{-1}\\cdot\\text{s}^{-1}$$</div>
+<div>Viscosity Formula: $$\\eta_{\\text{graph2}} = \\frac{2}{9} \\frac{(\\rho - \\sigma) g}{m_2} = \\frac{2 \\times (7.80 - 1.26) \\times 980}{9 \\times ${slope2.toFixed(2)}} = \\mathbf{${eta_graph2.toFixed(2)} \\text{ Poise}}$$</div>`;
+        }
+
+        if (window.renderMathInElement) {
+            renderMathInElement(term, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    function renderWorkedCalculations() {
+        let container = document.getElementById('worked-calculations-container');
+        let n = state.records.length;
+
+        let html = `<div style="font-weight: bold; font-size: 1rem; border-bottom: 2px solid var(--cyan-glow); padding-bottom: 6px; margin-bottom: 12px; color: var(--cyan-glow);">
+DETAILED STEP-BY-STEP MATHEMATICAL CALCULATION BREAKDOWN
+</div>
+
+<div style="margin-bottom: 12px; font-size: 0.85rem; line-height: 1.6;">
+  $$\\text{Constant Physical Parameters:}$$
+  $$\\text{Density of Glycerin } (\\sigma) = ${SIGMA_GLYCERIN} \\text{ g/cm}^3, \\quad \\text{Density of Steel Ball } (\\rho) = ${RHO_STEEL} \\text{ g/cm}^3$$
+  $$\\text{Density Difference } (\\rho - \\sigma) = 7.80 - 1.26 = 6.54 \\text{ g/cm}^3, \\quad \\text{Gravity } (g) = ${G_CGS} \\text{ cm/s}^2$$
+  $$\\text{Distance between Marks } AB \\ (L) = ${state.distanceL_cm.toFixed(1)} \\text{ cm}, \\quad \\text{Least Count } (L.C.) = 0.01 \\text{ mm}$$
+  $$\\text{Constant Factor: } \\frac{2}{9} (\\rho - \\sigma) g = \\frac{2}{9} \\times 6.54 \\times 980 = 1424.27 \\text{ g}\\cdot\\text{cm}^{-1}\\cdot\\text{s}^{-2}$$
+</div>
+<hr style="border-color: var(--border-dim); margin: 12px 0;">`;
+
+        if (n === 0) {
+            html += `<div style="font-style: italic; color: var(--amber-glow); margin-bottom: 12px; font-size: 0.85rem;">
+Note: No observation data logged yet. Displaying complete standard reference sample calculation for Ball A (Nominal 3.00 mm):
+</div>
+<div class="calculation-card" style="margin-bottom: 16px; padding: 12px; background: rgba(0, 240, 255, 0.02); border: 1px solid var(--border-dim); border-left: 4px solid var(--cyan-glow); border-radius: 6px;">
+    <div style="font-weight: bold; color: var(--cyan-glow); font-size: 0.9rem; margin-bottom: 8px;">
+        Sample Reference Observation: Ball A (Ball A, 3.00 mm)
+    </div>
+    
+    <div style="margin-bottom: 8px; font-size: 0.85rem;">
+        <strong>Step 1: Micrometer Screw Gauge Measurement & Radius Calculation</strong>
+        $$\\text{Main Scale Reading } (A) = 3.00 \\text{ mm}, \\quad \\text{Circular Scale Reading } (B) = 0 \\text{ divs}$$
+        $$\\text{Value of CSD } (C) = B \\times L.C. = 0 \\times 0.01 \\text{ mm} = 0.00 \\text{ mm}$$
+        $$\\text{Total Diameter } (D) = A + C = 3.00 + 0.00 = 3.00 \\text{ mm}$$
+        $$\\text{Radius of Sphere in cm } (r) = \\frac{D}{20} = \\frac{3.00}{20} = 0.150 \\text{ cm}$$
+        $$\\text{Radius Squared } (r^2) = (0.150)^2 = 0.022500 \\text{ cm}^2$$
+    </div>
+
+    <div style="margin-bottom: 8px; font-size: 0.85rem;">
+        <strong>Step 2: Terminal Velocity ($v$) Calculation</strong>
+        $$\\text{Distance } AB \\ (L) = 30.0 \\text{ cm}, \\quad \\text{Time of Fall } (t) = 3.20 \\text{ s}$$
+        $$\\text{Terminal Velocity } (v) = \\frac{L}{t} = \\frac{30.0}{3.20} = 9.38 \\text{ cm/s}$$
+    </div>
+
+    <div style="font-size: 0.85rem;">
+        <strong>Step 3: Coefficient of Viscosity ($\eta_1$) Substitution & Evaluation</strong>
+        $$\\eta_1 = \\frac{2}{9} \\frac{(\\rho - \\sigma) g r^2}{v} = \\frac{2}{9} \\times \\frac{(7.80 - 1.26) \\times 980 \\times (0.150)^2}{9.38}$$
+        $$\\eta_1 = \\frac{1424.27 \\times 0.022500}{9.38} = \\mathbf{3.42 \\text{ Poise}}$$
+    </div>
+</div>`;
+            container.innerHTML = html;
+            if (window.renderMathInElement) {
+                renderMathInElement(container, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+            return;
+        }
+
+        let sumEta = 0;
+        state.records.forEach((r, i) => {
+            let r2 = r.r_cm * r.r_cm;
+            html += `<div class="calculation-card" style="margin-bottom: 16px; padding: 12px; background: rgba(0, 240, 255, 0.02); border: 1px solid var(--border-dim); border-left: 4px solid var(--cyan-glow); border-radius: 6px;">
+    <div style="font-weight: bold; color: var(--cyan-glow); font-size: 0.9rem; margin-bottom: 8px;">
+        Observation ${i+1}: Ball ${r.ballId} (${r.ballName})
+    </div>
+    
+    <div style="margin-bottom: 8px; font-size: 0.85rem;">
+        <strong>Step 1: Micrometer Screw Gauge Measurement & Radius Calculation</strong>
+        $$\\text{Main Scale Reading } (A) = ${r.msr.toFixed(2)} \\text{ mm}, \\quad \\text{Circular Scale Reading } (B) = ${r.csr} \\text{ divs}$$
+        $$\\text{Value of CSD } (C) = B \\times L.C. = ${r.csr} \\times 0.01 \\text{ mm} = ${r.val_cs_mm.toFixed(2)} \\text{ mm}$$
+        $$\\text{Total Diameter } (D) = A + C = ${r.msr.toFixed(2)} + ${r.val_cs_mm.toFixed(2)} = ${r.total_d_mm.toFixed(2)} \\text{ mm}$$
+        $$\\text{Radius of Sphere in cm } (r) = \\frac{D}{20} = \\frac{${r.total_d_mm.toFixed(2)}}{20} = ${r.r_cm.toFixed(3)} \\text{ cm}$$
+        $$\\text{Radius Squared } (r^2) = (${r.r_cm.toFixed(3)})^2 = ${r2.toFixed(6)} \\text{ cm}^2$$
+    </div>
+
+    <div style="margin-bottom: 8px; font-size: 0.85rem;">
+        <strong>Step 2: Terminal Velocity ($v$) Calculation</strong>
+        $$\\text{Distance } AB \\ (L) = ${state.distanceL_cm.toFixed(1)} \\text{ cm}, \\quad \\text{Observed Time of Fall } (t) = ${r.timeSec.toFixed(2)} \\text{ s}$$
+        $$\\text{Terminal Velocity } (v) = \\frac{L}{t} = \\frac{${state.distanceL_cm.toFixed(1)}}{${r.timeSec.toFixed(2)}} = ${r.v_cm_s.toFixed(2)} \\text{ cm/s}$$
+    </div>
+
+    <div style="font-size: 0.85rem;">
+        <strong>Step 3: Coefficient of Viscosity ($\eta_{${i+1}}$) Substitution & Evaluation</strong>
+        $$\\eta_{${i+1}} = \\frac{2}{9} \\frac{(\\rho - \\sigma) g r^2}{v} = \\frac{2}{9} \\times \\frac{(7.80 - 1.26) \\times 980 \\times (${r.r_cm.toFixed(3)})^2}{${r.v_cm_s.toFixed(2)}}$$
+        $$\\eta_{${i+1}} = \\frac{1424.27 \\times ${r2.toFixed(6)}}{${r.v_cm_s.toFixed(2)}} = \\mathbf{${r.eta_poise.toFixed(2)} \\text{ Poise}}$$
+    </div>
+</div>`;
+            sumEta += r.eta_poise;
+        });
+
+        let meanEta = sumEta / n;
+        html += `<div style="margin-top: 16px; padding: 12px; background: rgba(0, 230, 118, 0.08); border: 1px solid var(--green-glow); border-radius: 6px;">
+    <div style="font-weight: bold; color: var(--green-glow); font-size: 0.95rem; margin-bottom: 6px;">
+        Step 4: Mean Coefficient of Viscosity ($\\bar{\\eta}$) Evaluation
+    </div>
+    $$\\bar{\\eta} = \\frac{1}{N} \\sum_{i=1}^{N} \\eta_i = \\frac{${sumEta.toFixed(2)}}{${n}} = \\mathbf{${meanEta.toFixed(2)} \\text{ Poise}}$$
+</div>`;
+
+        container.innerHTML = html;
+        if (window.renderMathInElement) {
+            renderMathInElement(container, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active-tab'));
+        document.getElementById(`tab-${tabId}`).classList.add('active-tab');
+
+        document.getElementById('view-pioneer-tables').style.display = tabId === 'pioneer-tables' ? 'flex' : 'none';
+        document.getElementById('view-unified-table').style.display = tabId === 'unified-table' ? 'flex' : 'none';
+        document.getElementById('view-screw').style.display = tabId === 'screw' ? 'flex' : 'none';
+        document.getElementById('view-graphs').style.display = tabId === 'graphs' ? 'flex' : 'none';
+        document.getElementById('view-suppl').style.display = tabId === 'suppl' ? 'flex' : 'none';
+        document.getElementById('view-theory').style.display = tabId === 'theory' ? 'flex' : 'none';
+        document.getElementById('view-viva').style.display = tabId === 'viva' ? 'flex' : 'none';
+
+        if (tabId === 'screw') renderScrewGaugeCanvas();
+        if (tabId === 'graphs') renderGraphCanvas();
+        if (tabId === 'suppl') renderWorkedCalculations();
+
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    function prepareForPrint() {
+        renderFluidCanvas();
+        renderScrewGaugeCanvas();
+        renderGraphCanvas();
+        renderWorkedCalculations();
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    window.onbeforeprint = prepareForPrint;
+
+    function triggerPrintReport() {
+        prepareForPrint();
+        window.print();
+    }
+
+    function toggleViva(el) {
+        let item = el.parentElement;
+        item.classList.toggle('open');
+    }
+</script>
+</body>
+</html>
